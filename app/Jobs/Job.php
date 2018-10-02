@@ -9,6 +9,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 abstract class Job implements ShouldQueue
 {
+    public function __construct()
+    {
+        $this->queue = env("QUEUE_NAME", 'default');
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | Queueable Jobs

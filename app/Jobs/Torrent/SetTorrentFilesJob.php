@@ -7,15 +7,16 @@ use App\Service\TorrentService;
 
 class SetTorrentFilesJob extends Job
 {
-
-    public $queue = 'test';
     public $id;
+    public $name;
     public $torrentService;
 
 
-    public function __construct(TorrentService $torrentService,$id = '')
+    public function __construct(TorrentService $torrentService,$id = '',$name='')
     {
+        parent::__construct();
         $this->torrentService = $torrentService;
+        $this->name = $name;
         $this->id = $id;
     }
 
@@ -28,7 +29,7 @@ class SetTorrentFilesJob extends Job
      */
     public function handle()
     {
-        echo "设置{$this->id}种子可下载文件列表";
+        echo "设置id:{$this->id},name:{$this->name}种子可下载文件列表";
         echo $this->torrentService->filterWantedFiles($this->id);
     }
 }

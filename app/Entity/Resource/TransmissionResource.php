@@ -16,12 +16,10 @@ use App\Tool\Curl;
 class TransmissionResource
 {
     private $apiUri;
-    private $sessionId;
 
     public function __construct($sessionId = null)
     {
         $this->apiUri = env('TRANSMISSION_API_URI', '');
-        $this->sessionId = $sessionId ?? env('TRANSMISSION_API_SESSION_ID', '');
     }
 
 
@@ -36,7 +34,7 @@ class TransmissionResource
     {
         $uri = $this->apiUri;
 
-        $header[] = 'X-Transmission-Session-Id:' . $this->sessionId;
+        $header[] = 'X-Transmission-Session-Id:' . $this->getSessionId();
         /** @var Curl $curl */
         $curl = app(Curl::class);
         $curl->setTimeOut($timeOut);
@@ -65,9 +63,9 @@ class TransmissionResource
         }
         $postData = [
             'arguments' => [
-                "fields" => $fields
+                "fields" => $fields,
+                'ids' => [$id],
             ],
-            'id' => [$id],
             'method' => 'torrent-get',
             'tag' => 'torrent-get'
         ];
@@ -84,13 +82,13 @@ class TransmissionResource
     {
         $postData = [
             'arguments' => [
-                "fields" => ['id']
+                "fields" => ['id', 'name']
             ],
             'method' => 'torrent-get',
             'tag' => 'torrent-get'
         ];
         $result = $this->postTransmissionRpcApi($postData);
-        return CArray::listData($result['arguments']['torrents'], 'id');
+        return CArray::listDictData($result['arguments']['torrents'], 'name', 'id');
     }
 
     /**
@@ -102,17 +100,49 @@ class TransmissionResource
      */
     public function setFiles(int $id, array $fileIndexs)
     {
+        $args = ['ids' => [$id]];
+        !empty($fileIndexs['wanted']) ? $args['files-wanted'] = $fileIndexs['wanted'] : '';
+        !empty($fileIndexs['unwanted']) ? $args['files-unwanted'] = $fileIndexs['unwanted'] : '';
         $postData = [
-            'arguments' => [
-                "files-unwanted" => $fileIndexs['unwanted'],
-                "files-wanted" => $fileIndexs['wanted'],
-            ],
-            'ids' => [$id],
+            'arguments' => $args,
             'method' => 'torrent-set',
             'tag' => 'torrent-set'
         ];
         $result = $this->postTransmissionRpcApi($postData);
+
         return true;
+    }
+
+    /**
+     * @return null|string
+     * @throws CurlException
+     */
+    public function getSessionId()
+    {
+        $uri = $this->apiUri;
+
+        /** @var Curl $curl */
+
+        $handler = curl_init();
+        curl_setopt($handler, CURLOPT_URL, $uri);
+        curl_setopt($handler, CURLOPT_HEADER, true);
+        curl_setopt($handler, CURLOPT_NOBODY, true);
+        curl_setopt($handler, CURLOPT_POST, false);
+        curl_setopt($handler, CURLOPT_RETURNTRANSFER, 1);
+        $content = curl_exec($handler);
+
+        $sessionId = null;
+        $headArr = explode("\r\n", $content);
+        foreach ($headArr as $loop) {
+            if (strpos($loop, "X-Transmission-Session-Id") !== false) {
+                $sessionId = trim(substr($loop, 27));
+                break;
+            }
+        }
+        if (empty($sessionId)) {
+            throw new CurlException('rpc获取sessionid失败:' . $content ?? '', CurlException::FILTER_CURL_ERROR);
+        }
+        return $sessionId;
     }
 
 

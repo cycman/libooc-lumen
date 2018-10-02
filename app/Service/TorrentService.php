@@ -61,7 +61,7 @@ class TorrentService extends BaseService
                 'extension' => 'pdf',
                 'language' => 'english',
                 'fileSize' => 1024 * 1024 * 10
-            ],$conditions);
+            ], $conditions);
 
         $torrent = app(TransmissionResource::class)->getTorrentById($id, ['files']);
         $files = $torrent['files'];
@@ -70,12 +70,15 @@ class TorrentService extends BaseService
             return explode('/', $name)[1];
         }, $files);
         $books = app(Book::class)->findBooksByMd5s($md5Arr, ['md5', 'fileSize', 'extension', 'language']);
+        foreach ($books as &$book) {
+            $book['md5'] = strtoupper($book['md5']);
+        }
         $books = CArray::setArrayKey($books, 'md5');
         $fileIndex = [];
         $wanted = [];
         $unwanted = [];
         foreach ($files as $index => $file) {
-            $md5 = explode('/', $file['name'])[1];
+            $md5 = strtoupper(explode('/', $file['name'])[1]);
             if (isset($books[$md5])) {
                 $book = $books[$md5];
                 if (
@@ -83,6 +86,7 @@ class TorrentService extends BaseService
                     strcasecmp($book['language'], $conditions['language']) == 0 &&
                     $book['fileSize'] <= $conditions['fileSize']) {
                     $wanted[] = $index;
+                    continue;
                 }
             }
             $unwanted[] = $index;
@@ -101,8 +105,8 @@ class TorrentService extends BaseService
     public function batchFilterWantedFilesJob()
     {
         $ids = $this->transmissionResource->getTorrentIds();
-        foreach ($ids as $id) {
-            dispatch($this->app->makeWith(SetTorrentFilesJob::class, ['id' => $id]));
+        foreach ($ids as $name => $id) {
+            dispatch($this->app->makeWith(SetTorrentFilesJob::class, ['id' => $id, 'name' => $name]));
         }
     }
 

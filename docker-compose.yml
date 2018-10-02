@@ -25,7 +25,7 @@ services:
       - SW_MAX_REQUEST=2000
     volumes:
       - php_volumes:/data/www
-    command: ["php", "artisan", "queue:work","--queue=test","--tries=1"]
+    command: ["php", "artisan", "queue:work","--queue=${QUEUE_NAME:-default}","--tries=1"]
   mysqldb:
     image: mysql:5.6
     environment:
