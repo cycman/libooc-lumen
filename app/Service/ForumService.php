@@ -34,7 +34,9 @@ class ForumService extends BaseService
         $pageSize = 100;
         $pageNum = 1;
         $jobs = [];
-        $query = $this->app->make(File::class)::query()->where($conditions)->with('extBook')->paginate($pageSize, ['*'], 'page', $pageNum);
+        $query = $this->app->make(File::class)::query();
+        $query->leftJoin('updated','b_file.bid','=','updated.ID');
+        $query = $query->where($conditions)->with('extBook')->paginate($pageSize, ['*'], 'page', $pageNum);
         while (true) {
             foreach ($query as $file) {
                 $file = $file->toArray();
@@ -49,7 +51,9 @@ class ForumService extends BaseService
                 break;
             }
             $pageNum++;
-            $query = $this->app->make(File::class)::query()->paginate($pageSize, ['*'], 'page', $pageNum);
+            $query = $this->app->make(File::class)::query();
+            $query->leftJoin('updated','b_file.bid','=','updated.ID');
+            $query = $query->where($conditions)->with('extBook')->paginate($pageSize, ['*'], 'page', $pageNum);
         }
         foreach ($jobs as $topicId => $bids) {
             if (!isset($topicMapForumIds[$topicId])) {
@@ -169,7 +173,7 @@ json;
                 $post['subject'] = $subject;
                 $post['dateline'] = $dateLine;
                 $post['htmlon'] = 1;
-                $maxPid = Db::connection('mysql_discuz')->table('forum_post_tableid')->getCountForPagination() + 1;
+                $maxPid = Db::connection('mysql_discuz')->table('forum_post_tableid')->max('pid') + 1;
                 $post['pid'] = $maxPid;
                 Db::connection('mysql_discuz')->table('forum_post_tableid')->insert(['pid' => $maxPid]);
                 Db::connection('mysql_discuz')->table('forum_post')->insert($post);

@@ -17,10 +17,10 @@ class ForumController extends Controller
     /**
      * 创建增加帖子的任务
      */
-    public function createPostJobs()
+    public function createPostJobs($topic)
     {
         set_time_limit(0);
-        $conditions = [];
+        $conditions = ['updated.Topic'=>$topic];
         var_dump(app(ForumService::class)->createPostJobsFromFile($conditions));
     }
 
