@@ -38,6 +38,9 @@ class ForumService extends BaseService
         while (true) {
             foreach ($query as $file) {
                 $file = $file->toArray();
+                if (!isset($file['ext_book']['Topic'])) {
+                    continue;
+                }
                 $fid = $file['ext_book']['Topic'];
                 $fid = empty($fid) ? '' : $fid;
                 $jobs[$fid][] = $file['bid'];
@@ -70,7 +73,7 @@ class ForumService extends BaseService
             foreach ($query as $book) {
                 $book = $book->toArray();
                 $bookThread = $this->app->make(BookThread::class);
-                if($bookThread->existsByMd5AndFid($book['MD5'],$fid)){
+                if ($bookThread->existsByMd5AndFid($book['MD5'], $fid)) {
                     continue;
                 }
                 $thread = <<<json
