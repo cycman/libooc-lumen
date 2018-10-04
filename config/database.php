@@ -69,6 +69,19 @@ return [
             'timezone'  => env('DB_TIMEZONE', '+00:00'),
             'strict'    => env('DB_STRICT_MODE', false),
         ],
+        'mysql_discuz' => [
+            'driver'    => 'mysql',
+            'host'      => env('DISCUZ_DB_HOST', '192.168.56.101'),
+            'port'      => env('DISCUZ_DB_PORT', 3306),
+            'database'  => env('DISCUZ_DB_DATABASE', 'ultrax'),
+            'username'  => env('DISCUZ_DB_USERNAME', 'root'),
+            'password'  => env('DISCUZ_DB_PASSWORD', 'aa5566556'),
+            'charset'   => env('DB_CHARSET', 'utf8'),
+            'collation' => env('DISCUZ_DB_COLLATION', 'utf8_unicode_ci'),
+            'prefix'    => env('DISCUZ_DB_PREFIX', ''),
+            'timezone'  => env('DISCUZ_DB_TIMEZONE', '+00:00'),
+            'strict'    => env('DISCUZ_DB_STRICT_MODE', false),
+        ],
 
         // ref. https://paulund.co.uk/configuring-multiple-database-connections-laravel
         /*

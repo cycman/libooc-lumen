@@ -18,6 +18,12 @@ class File extends Model
     protected $table = 'b_file';
     protected $columns = ['id', 'name', 'md5'];
 
+
+    public function extBook()
+    {
+        return $this->hasOne('App\Models\Book', 'ID', 'bid');
+    }
+
     public function findFilesByMd5s(array $md5s, array $columns = []): array
     {
         $query = self::query();
@@ -29,6 +35,14 @@ class File extends Model
     public function batchSaveFiles(array $files =[])
     {
         return DB::table($this->table)->insert($files);
+    }
+
+    public function findFilesByArgs(array $args, array $columns = ['*']): array
+    {
+        $query = self::query();
+        $query->select(empty($columns)?$this->columns:$columns)
+            ->where($args);
+        return $query->get()->toArray();
     }
 
 }

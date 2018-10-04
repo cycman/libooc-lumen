@@ -10,7 +10,8 @@
         "vlucas/phpdotenv": "~2.2",
         "folklore/graphql": "^1.1",
         "symfony/yaml": "^4.1",
-        "laravelcollective/html": "^5.6"
+        "laravelcollective/html": "^5.6",
+        "setasign/fpdi-fpdf": "^2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

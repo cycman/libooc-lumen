@@ -27,6 +27,7 @@ class Book extends Model
      * @var string
      */
     public $timestamps = false;
+    public $fields = ['*'];
 
     public function extBookDesc()
     {
@@ -62,5 +63,12 @@ class Book extends Model
         return $query->get()->toArray();
     }
 
+    public function pageQueryByIds(array $args, $pageSize = 15, $pageNum = 1)
+    {
+        $query = self::query();
+        $query->whereIn('ID',$args['ID']??[]);
+        $query->with('extBookDesc');
+        return $query->paginate($pageSize, $this->fields, 'page', $pageNum);
+    }
 
 }

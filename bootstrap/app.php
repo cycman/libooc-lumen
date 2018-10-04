@@ -93,6 +93,9 @@ $app->register(  Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 | can respond to, as well as the controllers that may handle them.
 |
 */
+
+$app->configure('forum');
+
 $app->configure('graphql');
 
 $app->register(Folklore\GraphQL\LumenServiceProvider::class);

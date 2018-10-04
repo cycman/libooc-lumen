@@ -14,6 +14,7 @@ use App\Jobs\DeleteFileJob;
 use App\Jobs\File\LoadFilesJob;
 use App\Models\Book;
 use App\Models\File;
+use App\Service\File\PreviewFileService;
 use App\Tool\CArray;
 
 class FileService extends BaseService
@@ -81,6 +82,7 @@ class FileService extends BaseService
         }
     }
 
+
     /**
      * 从路径中初始化文件
      * @param $dir
@@ -121,6 +123,52 @@ class FileService extends BaseService
             $files[] = $file;
         }
         return $this->app->make(File::class)->batchSaveFiles($files);
+    }
+
+    /**
+     * 预览文件
+     * @param $md5
+     * @return array
+     * @throws \Exception
+     * @throws \setasign\Fpdi\PdfReader\PdfReaderException
+     */
+    public function previewFile($md5)
+    {
+        $files = $this->app->make(File::class)->findFilesByMd5s([$md5,], ['name', 'extension', 'md5', 'locator']);
+        if (empty($files)) {
+            throw new \Exception("{$md5}文件不存在。", 1);
+        }
+        $file = array_pop($files);
+        $previewService = $this->app->make(PreviewFileService::class);
+        $extension = $file['extension'];
+        $previewFilePath = '';
+        switch (strtolower($extension)) {
+            case 'pdf':
+                $filePath = env("BOOK_FILE_DIR", '') . $file['locator'];
+                $previewFilePath = $previewService->makePreviewPdfFile($filePath, '', 10);
+                break;
+            default:
+                throw new \Exception("{$file['name']},暂不支持预览", 2);
+                break;
+        }
+        return ['name' => $file['name'] . '.' . $extension, 'path' => $previewFilePath,];
+    }
+
+    /**
+     * @param $md5
+     * @return array
+     * @throws \Exception
+     */
+    public function downloadFile($md5)
+    {
+        $files = $this->app->make(File::class)->findFilesByMd5s([$md5,], ['name', 'extension', 'md5', 'locator']);
+        if (empty($files)) {
+            throw new \Exception("文件不存在。", 1);
+        }
+        $file = array_pop($files);
+        $extension = $file['extension'];
+        $filePath = env("BOOK_FILE_DIR", '') . $file['locator'] ;
+        return ['name' => $file['name'] . '.' . $extension, 'path' => $filePath,];
     }
 
     /**
