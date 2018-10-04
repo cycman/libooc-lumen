@@ -19,6 +19,7 @@ class FileController extends Controller
 
     public function batchLoadFiles()
     {
+        set_time_limit(0);
         var_dump(app(FileService::class)->addLoadFilesJobs(env('BOOK_FILE_DIR', '')));
     }
 
@@ -31,6 +32,7 @@ class FileController extends Controller
      */
     public function previewFile($md5)
     {
+        set_time_limit(0);
         try {
             $preview = app(FileService::class)->previewFile($md5);
             $previewPath = $preview['path'];
@@ -59,6 +61,7 @@ class FileController extends Controller
 
     public function downloadFile($md5)
     {
+        set_time_limit(0);
         try {
             $fileInfo = app(FileService::class)->downloadFile($md5);
             $filePath = $fileInfo['path'];

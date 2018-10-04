@@ -19,6 +19,7 @@ class ForumController extends Controller
      */
     public function createPostJobs()
     {
+        set_time_limit(0);
         $conditions = [];
         var_dump(app(ForumService::class)->createPostJobsFromFile($conditions));
     }
