@@ -52,8 +52,8 @@ class FileController extends Controller
                 echo fread($fileHandle, 32768);
             }
             fclose($fileHandle);
-        } catch (Exception $e) {
-            return $e->getMessage();
+        } catch (\Exception $e) {
+            return '未知原因出错啦!!';
         }
     }
 
@@ -82,7 +82,7 @@ class FileController extends Controller
             }
             fclose($fileHandle);
         } catch (\Exception $e) {
-            return $e->getMessage();
+            return '未知原因出错啦!!';
         }
     }
 }

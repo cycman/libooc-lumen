@@ -18,6 +18,12 @@ $router->get('/', function () use ($router) {
         return redirect("file/preview_file/{$md5}");
     } elseif ($model == 'books') {
         return redirect("file/download_file/{$md5}");
+    } elseif ($model == 'covers') {
+        header('Pragma:no-cache');
+        header('HTTP/1.1 301 Moved Permanently');
+        $location = sprintf('%s/%s/%s', 'http://libgen.io/', 'covers', $_GET['location']);
+        header("Location: $location");
+
     }
 });
 $router->get('/torrents', function () use ($router) {
