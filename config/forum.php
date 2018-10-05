@@ -129,8 +129,6 @@ $data =  <<<json
 	]
 json;
 
-$topicData = json_decode($topicData, true);
-
 return [
     'topicmapforumids' => json_decode($data),
 ];

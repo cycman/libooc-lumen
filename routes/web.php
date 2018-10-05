@@ -12,8 +12,13 @@
 */
 
 $router->get('/', function () use ($router) {
-    var_dump(app(\App\Service\TorrentService::class)->loadTorrent(1));
-
+    $model = $_GET['models'];
+    $md5 = $_GET['md5'];
+    if ($model == 'books_preview') {
+        return redirect("file/preview_file/{$md5}");
+    } elseif ($model == 'books') {
+        return redirect("file/download_file/{$md5}");
+    }
 });
 $router->get('/torrents', function () use ($router) {
     var_dump(app(\App\Entity\Resource\TransmissionResource::class)->getTorrentIds());
