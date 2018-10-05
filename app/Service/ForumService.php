@@ -30,14 +30,17 @@ class ForumService extends BaseService
      */
     public function createPostJobsFromFile(array $conditions)
     {
-        $topicMapForumIds = $this->config['topicmapforumids'];
+        $topicMapForumIds = [];
+        foreach ($this->config['topicmapforumids'] as $item) {
+            $topicMapForumIds[$item['topic_id']] = $item['fid'];
+        }
         $pageSize = 100;
         $pageNum = 1;
-        $jobs = [];
         $query = $this->app->make(File::class)::query();
-        $query->leftJoin('updated','b_file.bid','=','updated.ID');
+        $query->leftJoin('updated', 'b_file.bid', '=', 'updated.ID');
         $query = $query->where($conditions)->with('extBook')->paginate($pageSize, ['*'], 'page', $pageNum);
         while (true) {
+            $jobs = [];
             foreach ($query as $file) {
                 $file = $file->toArray();
                 if (!isset($file['ext_book']['Topic'])) {
@@ -52,14 +55,14 @@ class ForumService extends BaseService
             }
             $pageNum++;
             $query = $this->app->make(File::class)::query();
-            $query->leftJoin('updated','b_file.bid','=','updated.ID');
+            $query->leftJoin('updated', 'b_file.bid', '=', 'updated.ID');
             $query = $query->where($conditions)->with('extBook')->paginate($pageSize, ['*'], 'page', $pageNum);
-        }
-        foreach ($jobs as $topicId => $bids) {
-            if (!isset($topicMapForumIds[$topicId])) {
-                continue;
+            foreach ($jobs as $topicId => $bids) {
+                if (!isset($topicMapForumIds[$topicId])) {
+                    continue;
+                }
+                dispatch($this->app->makeWith(CreatePostJob::class, ['ids' => $bids, 'fid' => $topicMapForumIds[$topicId]]));
             }
-            dispatch($this->app->makeWith(CreatePostJob::class, ['ids' => $bids, 'fid' => $topicMapForumIds[$topicId]]));
         }
     }
 
