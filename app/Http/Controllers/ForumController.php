@@ -17,7 +17,7 @@ class ForumController extends Controller
     /**
      * 创建增加帖子的任务
      */
-    public function createPostJobs($topic)
+    public function createPostJobs()
     {
         set_time_limit(0);
         var_dump(app(ForumService::class)->createPostJobsFromFile([]));

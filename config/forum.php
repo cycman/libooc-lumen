@@ -125,10 +125,10 @@ $data =  <<<json
 			"topic_descr": "empty",
 			"topic_id": "",
 			"fid":"31"
-		},
+		}
 	]
 json;
 
 return [
-    'topicmapforumids' => json_decode($data),
+    'topicmapforumids' => json_decode($data,true),
 ];

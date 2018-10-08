@@ -12,8 +12,11 @@ namespace App\Service;
 use App\Jobs\CreatePostJob;
 use App\Models\Book;
 use App\Models\BookThread;
+use App\Models\Discuz\Forum;
 use App\Models\File;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ForumService extends BaseService
 {
@@ -50,6 +53,12 @@ class ForumService extends BaseService
                 $fid = empty($fid) ? '' : $fid;
                 $jobs[$fid][] = $file['bid'];
             }
+            foreach ($jobs as $topicId => $bids) {
+                if (!isset($topicMapForumIds[$topicId])) {
+                    continue;
+                }
+                dispatch($this->app->makeWith(CreatePostJob::class, ['ids' => $bids, 'fid' => $topicMapForumIds[$topicId]]));
+            }
             if (!$query->hasMorePages()) {
                 break;
             }
@@ -57,12 +66,6 @@ class ForumService extends BaseService
             $query = $this->app->make(File::class)::query();
             $query->leftJoin('updated', 'b_file.bid', '=', 'updated.ID');
             $query = $query->where($conditions)->with('extBook')->paginate($pageSize, ['*'], 'page', $pageNum);
-            foreach ($jobs as $topicId => $bids) {
-                if (!isset($topicMapForumIds[$topicId])) {
-                    continue;
-                }
-                dispatch($this->app->makeWith(CreatePostJob::class, ['ids' => $bids, 'fid' => $topicMapForumIds[$topicId]]));
-            }
         }
     }
 
@@ -75,7 +78,8 @@ class ForumService extends BaseService
     {
         $pageSize = 1;
         $pageNum = 1;
-        while (true) {
+        $forum = $this->app->make(Forum::class)->findByFid($fid);
+        while ($forum) {
             $query = app(Book::class)->pageQueryByIds($args, $pageSize, $pageNum);
             foreach ($query as $book) {
                 $book = $book->toArray();
@@ -163,29 +167,39 @@ json;
                 $thread['subject'] = $subject;
                 $thread['dateline'] = $dateLine;
                 $thread['lastpost'] = $lastPost;
+                try {
+                    DB::beginTransaction();
+                    $tid = DB::connection('mysql_discuz')->table('forum_thread')->insertGetId(
+                        $thread
+                    );
+                    // C::t('forum_newthread')->insert(['tid'=>$tid,'fid'=>$fid,'dateLine'=>time()]);
+                    $post = json_decode($post, true);
 
-                $tid = DB::connection('mysql_discuz')->table('forum_thread')->insertGetId(
-                    $thread
-                );
-                // C::t('forum_newthread')->insert(['tid'=>$tid,'fid'=>$fid,'dateLine'=>time()]);
-                $post = json_decode($post, true);
+                    $post['fid'] = $fid;
+                    $post['tid'] = $tid;
+                    $post['message'] = $message;
+                    $post['subject'] = $subject;
+                    $post['dateline'] = $dateLine;
+                    $post['htmlon'] = 1;
+                    $maxPid = Db::connection('mysql_discuz')->table('forum_post_tableid')->max('pid') + 1;
+                    $post['pid'] = $maxPid;
+                    Db::connection('mysql_discuz')->table('forum_post_tableid')->insert(['pid' => $maxPid]);
+                    Db::connection('mysql_discuz')->table('forum_post')->insert($post);
+                    $bookThread = $this->app->make(BookThread::class);
+                    $bookThread->bid = $book['ID'];
+                    $bookThread->md5 = $book['MD5'];
+                    $bookThread->fid = $fid;
+                    $bookThread->tid = $tid;
+                    $bookThread->save();
+                    $forum->posts = $forum->posts + 1;
+                    $forum->threads = $forum->threads + 1;
+                    $forum->update();
+                    DB::commit();
+                } catch (\Exception $e) {
+                    Log::error($e->getMessage());
+                    DB::rollBack();
+                }
 
-                $post['fid'] = $fid;
-                $post['tid'] = $tid;
-                $post['message'] = $message;
-                $post['subject'] = $subject;
-                $post['dateline'] = $dateLine;
-                $post['htmlon'] = 1;
-                $maxPid = Db::connection('mysql_discuz')->table('forum_post_tableid')->max('pid') + 1;
-                $post['pid'] = $maxPid;
-                Db::connection('mysql_discuz')->table('forum_post_tableid')->insert(['pid' => $maxPid]);
-                Db::connection('mysql_discuz')->table('forum_post')->insert($post);
-                $bookThread = $this->app->make(BookThread::class);
-                $bookThread->bid = $book['ID'];
-                $bookThread->md5 = $book['MD5'];
-                $bookThread->fid = $fid;
-                $bookThread->tid = $tid;
-                $bookThread->save();
             }
             $pageNum += 1;
             if (!$query->hasMorePages()) {

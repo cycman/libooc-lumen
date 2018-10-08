@@ -10,5 +10,5 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-$router->get('/forum/create_post_jobs/{topic}', 'ForumController@createPostJobs');
+$router->get('/forum/create_post_jobs', 'ForumController@createPostJobs');
 

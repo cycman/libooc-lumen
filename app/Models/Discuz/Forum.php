@@ -12,6 +12,7 @@ class Forum extends DiscuzModel
 {
     protected $table = 'forum_forum';
 
+    protected $primaryKey = 'fid';
     protected $fields = ['*',];
 
     public function findAll()
@@ -19,6 +20,14 @@ class Forum extends DiscuzModel
         $query = self::query();
         $query->select($this->fields);
         return $query->get()->toArray();
+    }
+
+    public function findByFid($fid)
+    {
+        $query = self::query();
+        $query->where(['fid' => $fid,]);
+        $query->select($this->fields);
+        return $query->first();
     }
 
 }

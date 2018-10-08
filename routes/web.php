@@ -35,7 +35,7 @@ $router->get('/sessionId', function () use ($router) {
 });
 
 $router->get('/test', function () use ($router) {
-    var_dump(app(\App\Service\ForumService::class)->deployPost());
+    var_dump(app(\App\Service\FileService::class)->downloadFileByBid(1));
 });
 
 $router->get('/setfs/{id}', function ($id) use ($router) {

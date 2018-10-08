@@ -16,6 +16,7 @@ use App\Models\Book;
 use App\Models\File;
 use App\Service\File\PreviewFileService;
 use App\Tool\CArray;
+use Illuminate\Support\Facades\DB;
 
 class FileService extends BaseService
 {
@@ -126,11 +127,34 @@ class FileService extends BaseService
     }
 
     /**
+     * @param $bid
+     * @return array
+     * @throws \Exception
+     */
+    public function downloadFileByBid($bid)
+    {
+        $result = $this->app->make(File::class)->findFilesByArgs(['bid' => $bid], ['md5']);
+        $md5 = empty($result) ? null : array_pop($result)['md5'];
+        return $this->downloadFile($md5);
+    }
+
+    /**
+     * @param $bid
+     * @return array
+     * @throws \Exception
+     */
+    public function previewFileByBid($bid)
+    {
+        $result = $this->app->make(File::class)->findFilesByArgs(['bid' => $bid], ['md5']);
+        $md5 = empty($result) ? null : array_pop($result)['md5'];
+        return $this->previewFile($md5);
+    }
+
+    /**
      * 预览文件
      * @param $md5
      * @return array
      * @throws \Exception
-     * @throws \setasign\Fpdi\PdfReader\PdfReaderException
      */
     public function previewFile($md5)
     {
@@ -141,7 +165,6 @@ class FileService extends BaseService
         $file = array_pop($files);
         $previewService = $this->app->make(PreviewFileService::class);
         $extension = $file['extension'];
-        $previewFilePath = '';
         switch (strtolower($extension)) {
             case 'pdf':
                 $filePath = env("BOOK_FILE_DIR", '') . $file['locator'];
@@ -167,7 +190,7 @@ class FileService extends BaseService
         }
         $file = array_pop($files);
         $extension = $file['extension'];
-        $filePath = env("BOOK_FILE_DIR", '') . $file['locator'] ;
+        $filePath = env("BOOK_FILE_DIR", '') . $file['locator'];
         return ['name' => $file['name'] . '.' . $extension, 'path' => $filePath,];
     }
 

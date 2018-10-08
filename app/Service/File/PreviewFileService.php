@@ -16,22 +16,23 @@ class PreviewFileService extends BaseService
 {
     /**
      * 生成pdf预览文件
-     * @param $file
-     * @param string $perviewDestDir
+     * @param $sourceFile
+     * @param string $previewDestDir
      * @param int $previewPageSize
      * @return string
      * @throws \Exception
      */
-    public function makePreviewPdfFile($file, $perviewDestDir = '', $previewPageSize = 10)
+    public function makePreviewPdfFile($sourceFile, $previewDestDir = '', $previewPageSize = 30)
     {
-        $destPreviewDir = $perviewDestDir ?? env('PREVIEW_FILE_DIR', '');
-        $outputPdf = $destPreviewDir . md5($file) . '.pdf';
-        $inputPdf = $file;
+        $destPreviewDir = empty($previewDestDir) ? env('PREVIEW_FILE_DIR', '') : $previewDestDir;
+        $outputPdf = $destPreviewDir . md5($sourceFile) . '.pdf';
+        $inputPdf = $sourceFile;
         $pythonCmd = env('PYTHON_CMD', '');
-        if (!is_file($file)) {
-            throw  new \Exception("{$file} 不存在", 1);
+        if (!is_file($sourceFile)) {
+            throw  new \Exception("{$sourceFile} 不存在", 1);
         }
-        exec("{$pythonCmd} ../bin/preview.py 1 2 {$inputPdf} {$outputPdf}");
+        $outArr = [];
+        exec("{$pythonCmd} ../bin/preview.py 1 {$previewPageSize} {$inputPdf} {$outputPdf}",$outArr);
         return $outputPdf;
     }
 

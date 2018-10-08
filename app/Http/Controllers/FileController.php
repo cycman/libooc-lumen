@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Service\FileService;
+use Illuminate\Support\Facades\Log;
 
 class FileController extends Controller
 {
@@ -25,18 +26,20 @@ class FileController extends Controller
 
     /**
      * 预览文件
-     * @param $md5
+     * @param $identity
      * @return string
-     * @throws \Exception
-     * @throws \setasign\Fpdi\PdfReader\PdfReaderException
      */
-    public function previewFile($md5)
+    public function previewFile($identity)
     {
         set_time_limit(0);
         try {
-            $preview = app(FileService::class)->previewFile($md5);
-            $previewPath = $preview['path'];
-            $previewName = $preview['name'];
+            if (is_int($identity)) {
+                $fileInfo = app(FileService::class)->previewFileByBid($identity);
+            }else{
+                $fileInfo = app(FileService::class)->previewFile($identity);
+            }
+            $previewPath = $fileInfo['path'];
+            $previewName = $fileInfo['name'];
 
             //r: 以只读方式打开，b: 强制使用二进制模式
             $fileHandle = fopen($previewPath, "rb");
@@ -52,18 +55,23 @@ class FileController extends Controller
                 echo fread($fileHandle, 32768);
             }
             fclose($fileHandle);
+            die;
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return '未知原因出错啦!!';
         }
     }
-
     //
 
-    public function downloadFile($md5)
+    public function downloadFile($identity)
     {
         set_time_limit(0);
         try {
-            $fileInfo = app(FileService::class)->downloadFile($md5);
+            if (is_int($identity)) {
+                $fileInfo = app(FileService::class)->downloadFileByBid($identity);
+            } else {
+                $fileInfo = app(FileService::class)->downloadFile($identity);
+            }
             $filePath = $fileInfo['path'];
             $fileName = $fileInfo['name'];
 
