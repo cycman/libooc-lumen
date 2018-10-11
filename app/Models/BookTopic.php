@@ -27,4 +27,11 @@ class BookTopic extends Model
      * @var string
      */
     public $timestamps = false;
+
+    public function findByTopicIdHlId($id)
+    {
+        $query = self::query();
+        $query->where(['topic_id_hl' => $id,]);
+        return $query->get()->toArray();
+    }
 }

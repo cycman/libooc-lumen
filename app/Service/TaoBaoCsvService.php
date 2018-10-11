@@ -10,7 +10,9 @@ namespace App\Service;
 
 
 use App\Models\Book;
+use App\Models\BookTopic;
 use App\Service\Taobao\ProductService;
+use App\Tool\CArray;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -36,10 +38,15 @@ class TaoBaoCsvService extends BaseService
     public function createTaoBaoCsvByTopic($name, $topic = '', $offset = 0, $size = 1000)
     {
         $query = Book::query();
-        $query->leftJoin('b_file', 'updated.ID', '=', 'b_file.bid');
-        $query->leftJoin('topics', 'updated.topic', '=', 'topics.topic_id_hl');
-        $query->leftJoin('b_book_thread', 'updated.ID', '=', 'b_book_thread.bid');
-        $query->where(['updated.topic' => $topic]);
+        $query->rightJoin('b_file', 'updated.ID', '=', 'b_file.bid');
+        $query->rightJoin('b_book_thread', 'updated.ID', '=', 'b_book_thread.bid');
+        if (empty($topic)) {
+            $query->where(['updated.topic' => $topic]);
+        } else {
+            $topics =  $this->app->make(BookTopic::class)->findByTopicIdHlId($topic);
+            $tids = CArray::listData($topics, 'topic_id');
+            $query->whereIn('updated.topic', $tids);
+        }
         $query->offset($offset);
         $query->limit($size);
         $books = $query->with('extBookDesc')->get()->toArray();
@@ -106,7 +113,7 @@ class TaoBaoCsvService extends BaseService
             $productTemplate[19] = date('Y-M-D h:i:s', time() + 86400);//pro begin_time
             $productTemplate[20] = $this->productService->genProductDesc($book);//pro desc
             $productTemplate[33] = $book['ID'];//pro 商家编码
-            $productTemplate[48] = 999;//pro 库存数量
+            $productTemplate[9] = 999;//pro 库存数量
             $productTemplate[53] = $this->productService->genWirelessDesc($book);//移动端描述
 
             $productTemplate[28] = sprintf('%s:1:0:', $book['MD5']);//pro images  imageFirst:1:0:|imageSecond:1:1:

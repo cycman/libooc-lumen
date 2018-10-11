@@ -52,6 +52,8 @@ class ProductService extends BaseService
   <strong>版本：%s</strong>
   <br />
   <strong>出版社：%s</strong>
+  <br /> 
+  <strong>ID：%s</strong>
   <br />
   <div class="quote">
    <blockquote class="quote">
@@ -75,6 +77,7 @@ html;
             $book['Author'],
             $book['Edition'],
             $book['Publisher'],
+            $book['ID'],
             $book['ext_book_desc']['descr'],
             $previewUrl
         );
@@ -89,7 +92,7 @@ html;
     {
         $previewUrl = $this->forumService->getThreadUrlByMd5($book['MD5']);
         $descTemplate = <<<html
-<wapDesc><txt>书籍信息</txt><txt>标题:%s</txt><txt>语言：%s</txt><txt>页数:%s</txt><txt>日期:%s</txt><txt>作者:%s</txt><txt>版本:%s</txt><txt>出版社:%s</txt><txt>预览地址:%s</txt></wapDesc>
+<wapDesc><txt>书籍信息</txt><txt>标题:%s</txt><txt>语言：%s</txt><txt>页数:%s</txt><txt>日期:%s</txt><txt>作者:%s</txt><txt>版本:%s</txt><txt>出版社:%s</txt><txt>ID:%s</txt><txt>预览地址:%s</txt></wapDesc>
 html;
         return sprintf(
             $descTemplate,
@@ -100,6 +103,7 @@ html;
             $book['Author'],
             $book['Edition'],
             $book['Publisher'],
+            $book['ID'],
             $previewUrl
         );
     }
