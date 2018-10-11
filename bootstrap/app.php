@@ -95,6 +95,7 @@ $app->register(  Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class);
 */
 
 $app->configure('forum');
+$app->configure('taobao');
 
 $app->configure('graphql');
 

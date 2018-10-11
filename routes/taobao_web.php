@@ -10,6 +10,11 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-$router->get('/forum/create_post_jobs', 'ForumController@createPostJobs');
-$router->get('/forum/delete_error_forums', 'ForumController@deleteErrorPost');
+$router->get('/taobao/create_csv/{name}', function ($name){
+    var_dump(app(\App\Service\TaoBaoCsvService::class)->createTaoBaoCsvByTopic(
+        $name,
+        $_GET['topic'],
+        $_GET['offset'],
+        $_GET['size']));
+});
 

@@ -23,4 +23,24 @@ class BookThread extends Model
         $query->where(['md5' => $md5, 'fid' => $fid,]);
         return $query->exists();
     }
+
+    public function deleteByTid($tid)
+    {
+        $query = self::query();
+        $query->where(['tid' => $tid]);
+        return $query->delete();
+    }
+
+    public function findByMd5($md5)
+    {
+        $query = self::query();
+        $query->where(['md5' => $md5]);
+        return $query->first();
+    }
+
+    public function findAll()
+    {
+        $query = self::query();
+        return $query->get()->toArray();
+    }
 }

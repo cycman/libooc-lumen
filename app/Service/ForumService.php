@@ -28,6 +28,33 @@ class ForumService extends BaseService
     }
 
 
+    public function deleteErrorPost()
+    {
+        try {
+            $bookThreads = (new BookThread())->findAll();
+            foreach ($bookThreads as $bookThread) {
+                $fid = $bookThread['fid'];
+                $tid = $bookThread['tid'];
+                DB::beginTransaction();
+                DB::connection('mysql_discuz')->table('forum_thread')->where('tid', '=', $tid)->delete();
+                Db::connection('mysql_discuz')->table('forum_post_tableid')->where('tid', '=', $tid)->delete();
+                Db::connection('mysql_discuz')->table('forum_post')->where('tid', '=', $tid)->delete();
+                $this->app->make(BookThread::class)->deleteByTid($tid);
+                /** @var Forum $forum */
+                $forum = $this->app->make(Forum::class)->findByFid($fid);
+                if (!$forum) {
+                    $forum->posts = $forum->posts - 1;
+                    $forum->threads = $forum->threads - 1;
+                    $forum->update();
+                }
+                DB::commit();
+            }
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            DB::rollBack();
+        }
+    }
+
     /**
      * @param array $conditions
      */
@@ -298,6 +325,20 @@ json;
         $queryData['location'] = $book['Coverurl'];
         $queryData = http_build_query($queryData);
         return sprintf('%s?%s', $host, $queryData);
+    }
+
+    function getThreadUrlByMd5($md5)
+    {
+        $bookThread = $this->app->make(BookThread::class)->findByMd5($md5);
+        if (empty($bookThread)) {
+            return false;
+        }
+        $bookThread = $bookThread->toArray();
+        if (isset($bookThread['tid'])) {
+            $tid = $bookThread['tid'];
+            $uri = sprintf('%s/thread-%s-1-1.html', env('DISCUZ_URL'), $tid);
+        }
+        return $uri ?? false;
     }
 
     public function tag($tag, $content, $attrs)

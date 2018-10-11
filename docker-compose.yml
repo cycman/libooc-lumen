@@ -11,7 +11,7 @@ services:
     links:
       - "php"
   php:
-    image: ${PHP_IMAGE:-docker.bs58i.baishancloud.com/oss/phalcon:dev}
+    build: ./.docker/php
     environment:
       - SW_WORKER_NUM=10
       - SW_MAX_REQUEST=2000

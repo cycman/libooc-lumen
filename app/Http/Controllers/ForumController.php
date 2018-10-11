@@ -23,4 +23,10 @@ class ForumController extends Controller
         var_dump(app(ForumService::class)->createPostJobsFromFile([]));
     }
 
+    public function deleteErrorPost()
+    {
+        set_time_limit(0);
+        var_dump(app(ForumService::class)->deleteErrorPost());
+    }
+
 }
