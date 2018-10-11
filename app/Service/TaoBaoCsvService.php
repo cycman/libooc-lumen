@@ -35,7 +35,6 @@ class TaoBaoCsvService extends BaseService
      */
     public function createTaoBaoCsvByTopic($name, $topic = '', $offset = 0, $size = 1000)
     {
-
         $query = Book::query();
         $query->leftJoin('b_file', 'updated.ID', '=', 'b_file.bid');
         $query->leftJoin('topics', 'updated.topic', '=', 'topics.topic_id_hl');

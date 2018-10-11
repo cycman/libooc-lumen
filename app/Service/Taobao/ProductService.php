@@ -89,7 +89,7 @@ html;
     {
         $previewUrl = $this->forumService->getThreadUrlByMd5($book['MD5']);
         $descTemplate = <<<html
-        <wapDesc><txt>书籍信息</txt><txt>标题:%s</txt><txt>语言：%s</txt><txt>页数:%s</txt><txt>日期:%s</txt><txt>作者:%s</txt><txt>版本:%s</txt><txt>出版社:%s</txt><txt>预览地址:%s</txt></wapDesc>
+<wapDesc><txt>书籍信息</txt><txt>标题:%s</txt><txt>语言：%s</txt><txt>页数:%s</txt><txt>日期:%s</txt><txt>作者:%s</txt><txt>版本:%s</txt><txt>出版社:%s</txt><txt>预览地址:%s</txt></wapDesc>
 html;
         return sprintf(
             $descTemplate,

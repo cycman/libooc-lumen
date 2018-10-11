@@ -10,11 +10,11 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-$router->get('/taobao/create_csv/{name}', function ($name){
+$router->get('/taobao/create_csv/{name}', function ($name) {
     var_dump(app(\App\Service\TaoBaoCsvService::class)->createTaoBaoCsvByTopic(
         $name,
-        $_GET['topic'],
-        $_GET['offset'],
-        $_GET['size']));
+        $_GET['topic'] ?? '',
+        $_GET['offset'] ?? '0',
+        $_GET['size'] ?? 1000));
 });
 
