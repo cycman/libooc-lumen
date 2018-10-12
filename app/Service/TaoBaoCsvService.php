@@ -115,6 +115,7 @@ class TaoBaoCsvService extends BaseService
             $productTemplate[20] = $this->productService->genProductDesc($book);//pro desc
             $productTemplate[33] = $book['ID'];//pro 商家编码
             $productTemplate[9] = 999;//pro 库存数量
+            $productTemplate[47] = null;//pro 国家地区必填为空
             $productTemplate[53] = $this->productService->genWirelessDesc($book);//移动端描述
 
             $productTemplate[28] = sprintf('%s:1:0:', $book['MD5']);//pro images  imageFirst:1:0:|imageSecond:1:1:
