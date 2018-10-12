@@ -47,6 +47,7 @@ class TaoBaoCsvService extends BaseService
             $tids = CArray::listData($topics, 'topic_id');
             $query->whereIn('updated.topic', $tids);
         }
+        $query->where(['updated.language' => 'english']);
         $query->offset($offset);
         $query->limit($size);
         $books = $query->with('extBookDesc')->get()->toArray();
