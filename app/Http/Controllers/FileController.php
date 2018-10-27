@@ -33,7 +33,7 @@ class FileController extends Controller
     {
         set_time_limit(0);
         try {
-            if (is_int($identity)) {
+            if (is_numeric($identity)) {
                 $fileInfo = app(FileService::class)->previewFileByBid($identity);
             }else{
                 $fileInfo = app(FileService::class)->previewFile($identity);
@@ -67,7 +67,7 @@ class FileController extends Controller
     {
         set_time_limit(0);
         try {
-            if (is_int($identity)) {
+            if (is_numeric($identity)) {
                 $fileInfo = app(FileService::class)->downloadFileByBid($identity);
             } else {
                 $fileInfo = app(FileService::class)->downloadFile($identity);
@@ -98,7 +98,7 @@ class FileController extends Controller
     {
         set_time_limit(0);
         try {
-            if (is_int($identity)) {
+            if (is_numeric($identity)) {
                 $fileInfo = app(FileService::class)->imageFileByBid($identity);
             } else {
                 $fileInfo = app(FileService::class)->imageFile($identity);
