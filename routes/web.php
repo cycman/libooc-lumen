@@ -12,8 +12,8 @@
 */
 
 $router->get('/', function () use ($router) {
-    $model = $_GET['models'];
-    $md5 = $_GET['md5'];
+    $model = $_GET['models']??'';
+    $md5 = $_GET['md5']??'';
     if ($model == 'books_preview') {
         return redirect("file/preview_file/{$md5}");
     } elseif ($model == 'books') {
@@ -21,6 +21,7 @@ $router->get('/', function () use ($router) {
     } elseif ($model == 'covers') {
         return redirect("file/image_file/{$md5}");
     }
+    exit();
 });
 $router->get('/torrents', function () use ($router) {
     var_dump(app(\App\Entity\Resource\TransmissionResource::class)->getTorrentIds());
