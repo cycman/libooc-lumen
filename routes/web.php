@@ -19,6 +19,10 @@ $router->get('/', function () use ($router) {
     } elseif ($model == 'books') {
         return redirect("file/download_file/{$md5}");
     } elseif ($model == 'covers') {
+        $location = $_GET['location'] ??'';
+        $infos = explode('/', $location);
+        $infos = explode('-', $infos['1']);
+        $md5 = $infos[0];
         return redirect("file/image_file/{$md5}");
     }
     exit();
