@@ -93,4 +93,34 @@ class FileController extends Controller
             return '未知原因出错啦!!';
         }
     }
+
+    public function imageFile($identity)
+    {
+        set_time_limit(0);
+        try {
+            if (is_int($identity)) {
+                $fileInfo = app(FileService::class)->imageFileByBid($identity);
+            } else {
+                $fileInfo = app(FileService::class)->imageFile($identity);
+            }
+            $filePath = $fileInfo['path'];
+
+            //r: 以只读方式打开，b: 强制使用二进制模式
+            $fileHandle = fopen($filePath, "rb");
+
+            Header("Content-type: application/octet-stream");
+            Header("Content-Transfer-Encoding: binary");
+            Header("Accept-Ranges: bytes");
+            Header("Content-Length: " . filesize($filePath));
+
+            while (!feof($fileHandle)) {
+                //从文件指针 handle 读取最多 length 个字节
+                echo fread($fileHandle, 32768);
+            }
+            fclose($fileHandle);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return '未知原因出错啦!!';
+        }
+    }
 }

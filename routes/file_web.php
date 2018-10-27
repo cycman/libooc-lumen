@@ -13,4 +13,5 @@
 $router->get('/file/batch_load_files', 'FileController@batchLoadFiles');
 $router->get('/file/preview_file/{md5}', 'FileController@previewFile');
 $router->get('/file/download_file/{md5}', 'FileController@downloadFile');
+$router->get('/file/image_file/{md5}', 'FileController@imageFile');
 

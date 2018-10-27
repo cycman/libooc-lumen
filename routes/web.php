@@ -19,11 +19,7 @@ $router->get('/', function () use ($router) {
     } elseif ($model == 'books') {
         return redirect("file/download_file/{$md5}");
     } elseif ($model == 'covers') {
-        header('Pragma:no-cache');
-        header('HTTP/1.1 301 Moved Permanently');
-        $location = sprintf('%s/%s/%s', 'http://libgen.io/', 'covers', $_GET['location']);
-        header("Location: $location");
-
+        return redirect("file/image_file/{$md5}");
     }
 });
 $router->get('/torrents', function () use ($router) {
@@ -35,7 +31,26 @@ $router->get('/sessionId', function () use ($router) {
 });
 
 $router->get('/test', function () use ($router) {
-    var_dump(app(\App\Service\FileService::class)->downloadFileByBid(1));
+    $file = fopen(env('KONGFU_CSV_OUT_DIR').'template.csv', 'r');
+    $version = [];
+    $enSvcTitles = [];
+    $chSvcTitles = [];
+    $template = [];
+    while ($data = fgetcsv($file, 0, ",")) {    //每次读取CSV里面的一行内容
+        if (empty($version)) {
+            $version = $data;
+        } elseif (empty($enSvcTitles)) {
+            $enSvcTitles = $data;
+        } elseif (empty($chSvcTitles)) {
+            $chSvcTitles = $data;
+        } elseif (empty($template)) {
+            $template = $data;
+        }
+    }
+    fclose($file);
+    var_dump($version);
+    var_dump($enSvcTitles);
+    var_dump($chSvcTitles);
 });
 
 $router->get('/setfs/{id}', function ($id) use ($router) {

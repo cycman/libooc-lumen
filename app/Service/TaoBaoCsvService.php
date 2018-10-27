@@ -56,10 +56,9 @@ class TaoBaoCsvService extends BaseService
 
     /**
      * @param $templateFile
-     * @param $name
      * @return array
      */
-    private function getCsvTemplate($templateFile, $name): array
+    private function getCsvTemplate($templateFile): array
     {
         $file = fopen($templateFile, 'r');
         $version = [];

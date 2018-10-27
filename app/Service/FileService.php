@@ -131,6 +131,18 @@ class FileService extends BaseService
      * @return array
      * @throws \Exception
      */
+    public function imageFileByBid($bid)
+    {
+        $result = $this->app->make(File::class)->findFilesByArgs(['bid' => $bid], ['md5']);
+        $md5 = empty($result) ? null : array_pop($result)['md5'];
+        return $this->imageFile($md5);
+    }
+
+    /**
+     * @param $bid
+     * @return array
+     * @throws \Exception
+     */
     public function downloadFileByBid($bid)
     {
         $result = $this->app->make(File::class)->findFilesByArgs(['bid' => $bid], ['md5']);
@@ -192,6 +204,23 @@ class FileService extends BaseService
         $extension = $file['extension'];
         $filePath = env("BOOK_FILE_DIR", '') . $file['locator'];
         return ['name' => $file['name'] . '.' . $extension, 'path' => $filePath,];
+    }
+
+
+    /**
+     * @param $md5
+     * @return array
+     * @throws \Exception
+     */
+    public function imageFile($md5)
+    {
+        $books = $this->app->make(Book::class)->findBooksByMd5s([$md5,], ['Coverurl']);
+        if (empty($books)) {
+            throw new \Exception("文件不存在。", 1);
+        }
+        $book = array_pop($books);
+        $filePath = env("BOOK_IMAGE_DIR", '') . $book['Coverurl'];
+        return ['path' => $filePath,];
     }
 
     /**
