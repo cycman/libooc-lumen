@@ -11,7 +11,8 @@
         "folklore/graphql": "^1.1",
         "symfony/yaml": "^4.1",
         "laravelcollective/html": "^5.6",
-        "setasign/fpdi-fpdf": "^2.0"
+        "setasign/fpdi-fpdf": "^2.0",
+        "overtrue/wechat": "~4.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

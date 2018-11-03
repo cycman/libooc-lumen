@@ -75,21 +75,16 @@ class FileController extends Controller
             $filePath = $fileInfo['path'];
             $fileName = $fileInfo['name'];
 
-            //r: 以只读方式打开，b: 强制使用二进制模式
-            $fileHandle = fopen($filePath, "rb");
-
-            Header("Content-type: application/octet-stream");
-            Header("Content-Transfer-Encoding: binary");
-            Header("Accept-Ranges: bytes");
-            Header("Content-Length: " . filesize($filePath));
-            Header("Content-Disposition: attachment; filename=\"{$fileName}\"");
-
-            while (!feof($fileHandle)) {
-                //从文件指针 handle 读取最多 length 个字节
-                echo fread($fileHandle, 32768);
+            $pattern = "/\\d+\/.*/";
+            $match = [];
+            preg_match($pattern, $filePath,$match);
+            if (empty($match)) {
+                throw new \Exception('找不到该文件', 1);
             }
-            fclose($fileHandle);
+            $path = $match[0];
+            return redirect("$path?file_name={$fileName}");
         } catch (\Exception $e) {
+            Log::error($e->getMessage());
             return '未知原因出错啦!!';
         }
     }
