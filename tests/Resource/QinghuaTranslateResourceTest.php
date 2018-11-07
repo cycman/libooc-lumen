@@ -17,7 +17,7 @@ class QinghuaTranslateResourceTest extends TestCase
     public function testTranslate()
     {
         $qignhua = $this->app->make(QinghuaTranslateResource::class);
-        $result = $qignhua->translateEnToZh(['test','apple']);
+        $result = $qignhua->translateEnToZh(['The NEC 3 Engineering and Construction Contract: A Commentary, Second Edition','apple']);
         $this->assertEquals(['测试','苹果'], $result,print_r($result,1));
     }
 }

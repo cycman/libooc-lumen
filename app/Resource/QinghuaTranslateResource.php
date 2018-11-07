@@ -19,9 +19,9 @@ class QinghuaTranslateResource
     public function translateEnToZh($queries = [])
     {
         $query = implode("|||", $queries);
-        $url = sprintf("%s/%s", $this->url, urlencode($query));
-        var_dump($url);
+        $url = sprintf("%s/%s", $this->url, rawurlencode(rawurlencode($query)));
         $ch = curl_init();
+        var_dump($url);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
