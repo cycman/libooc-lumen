@@ -33,7 +33,7 @@ class ZhBookImfService extends BaseService
             $query->rightJoin('b_file', 'updated.ID', '=', 'b_file.bid');
             $query->where(['updated.language' => 'english']);
             $query->offset($offset);
-            $query->limit(10);
+            $query->limit(1);
             $books = $query->with('extZhImf')->get()->toArray();
             $bookIds = [];
             foreach ($books as $book) {
