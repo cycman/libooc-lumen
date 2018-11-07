@@ -16,11 +16,11 @@ class ZhBookImfServiceTest extends TestCase
 
     public function testBatchInsertZhBookImfs()
     {
-       // $this->app->make(ZhBookImfService::class)->batchInsertZhBookImfs([59,60]);
+        $this->app->make(ZhBookImfService::class)->batchInsertZhBookImfs([59]);
     }
 
     public function testGenInsertImfJobs()
     {
-        $this->app->make(ZhBookImfService::class)->genInsertImfJobs();
+//        $this->app->make(ZhBookImfService::class)->genInsertImfJobs();
     }
 }

@@ -10,6 +10,7 @@ namespace App\Service;
 
 use App\Jobs\InsertZhBookImfJob;
 use App\Models\Book;
+use App\Models\BookDesc;
 use App\Models\ZhBookImf;
 use App\Resource\QinghuaTranslateResource;
 
@@ -55,11 +56,13 @@ class ZhBookImfService extends BaseService
     public function batchInsertZhBookImfs(array $bids = [])
     {
         ZhBookImf::query()->whereIn('bid', $bids)->delete();
-        $books = Book::query()->whereIn('id', $bids)->with('extBookDesc')->get()->toArray();
+        $books = Book::query()->whereIn('updated.ID', $bids)->leftJoin((new BookDesc())->getTable(),'updated.MD5','=','description.md5')
+            ->get()
+            ->toArray();
         $enTitles = [];
         $enDescs = [];
         foreach ($books as $book) {
-            $enDescs[] = !isset($book['ext_book_desc']['descr']) || empty($book['ext_book_desc']['descr']) ? 'empty':$book['ext_book_desc']['descr'];
+            $enDescs[] = empty($book['descr'])? 'empty':$book['descr'];
             $enTitles[] = empty($book['Title']) ? 'empty' : $book['Title'];
         }
         $chTitles = $this->translateResource->translateEnToZh($enTitles);
