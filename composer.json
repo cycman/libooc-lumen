@@ -12,7 +12,8 @@
         "symfony/yaml": "^4.1",
         "laravelcollective/html": "^5.6",
         "setasign/fpdi-fpdf": "^2.0",
-        "overtrue/wechat": "~4.0"
+        "overtrue/wechat": "~4.0",
+        "statickidz/php-google-translate-free": "^1.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
