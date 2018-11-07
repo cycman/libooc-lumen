@@ -216,7 +216,7 @@ class FileService extends BaseService
     {
         $books = $this->app->make(Book::class)->findBooksByMd5s([$md5,], ['Coverurl']);
         if (empty($books)) {
-            throw new \Exception("文件不存在。", 1);
+            throw new \Exception("book不存在。", 1);
         }
         $book = array_pop($books);
         $filePath = env("BOOK_IMAGE_DIR", '') . $book['Coverurl'];

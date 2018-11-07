@@ -99,20 +99,30 @@ class FileController extends Controller
                 $fileInfo = app(FileService::class)->imageFile($identity);
             }
             $filePath = $fileInfo['path'];
+            if (is_file($filePath)) {
+                //r: 以只读方式打开，b: 强制使用二进制模式
+                $fileHandle = fopen($filePath, "rb");
 
-            //r: 以只读方式打开，b: 强制使用二进制模式
-            $fileHandle = fopen($filePath, "rb");
+                Header("Content-type: application/octet-stream");
+                Header("Content-Transfer-Encoding: binary");
+                Header("Accept-Ranges: bytes");
+                Header("Content-Length: " . filesize($filePath));
 
-            Header("Content-type: application/octet-stream");
-            Header("Content-Transfer-Encoding: binary");
-            Header("Accept-Ranges: bytes");
-            Header("Content-Length: " . filesize($filePath));
-
-            while (!feof($fileHandle)) {
-                //从文件指针 handle 读取最多 length 个字节
-                echo fread($fileHandle, 32768);
+                while (!feof($fileHandle)) {
+                    //从文件指针 handle 读取最多 length 个字节
+                    echo fread($fileHandle, 32768);
+                }
+                fclose($fileHandle);
+                exit();
+            } else {
+                $pattern = '/\\d+\/.*/';
+                $matchs = [];
+                preg_match($pattern, $filePath, $matchs);
+                header('cache:cache');
+                header('HTTP/1.1 301 Moved Permanently');
+                $location = sprintf('%s/%s/%s', 'http://libgen.io/', 'covers', $matchs[0]);
+                header("Location: $location");
             }
-            fclose($fileHandle);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return '未知原因出错啦!!';
