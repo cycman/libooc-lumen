@@ -65,7 +65,7 @@ class ZhBookImfService extends BaseService
         $chTitles = $this->translateResource->translateEnToZh($enTitles);
         $chDescs = $this->translateResource->translateEnToZh($enDescs);
         foreach ($books as $index => $book) {
-            $zhBookimf = ['bid' => $book['ID'], 'md5' => $book['MD5'], 'descr' => $chDescs[$index], 'title' => $chTitles[$index],];
+            $zhBookimf = ['bid' => $book['ID'], 'md5' => $book['MD5'], 'descr' => $chDescs[$index]??'', 'title' => $chTitles[$index]??'',];
             $zhBookimfModel = new ZhBookImf();
             $zhBookimfModel->setRawAttributes($zhBookimf);
             $zhBookimfModel->save();

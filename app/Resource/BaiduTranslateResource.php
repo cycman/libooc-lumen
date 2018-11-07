@@ -10,6 +10,7 @@ namespace App\Resource;
 
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class BaiduTranslateResource
 {
@@ -38,6 +39,10 @@ class BaiduTranslateResource
         $args['sign'] = $this->buildSign($query, $this->appId, $args['salt'], $this->secKey);
         $ret = $this->call($this->url, $args);
         $ret = json_decode($ret, true);
+        if (isset($ret['error_code'])) {
+            Log::error(json_encode($ret));
+            $ret = [];
+        }
         return $ret;
     }
 
