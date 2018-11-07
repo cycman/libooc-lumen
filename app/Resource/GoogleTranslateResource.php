@@ -16,7 +16,7 @@ class GoogleTranslateResource
     public function translateEnToZh($queries = [])
     {
         $trans = new GoogleTranslate();
-        $result = $trans->translate('en', 'zh', implode('|||',$queries));
-        return explode('|||', $result);
+        $result = $trans->translate('en', 'zh', implode("\n",$queries));
+        return explode("\n", $result);
     }
 }

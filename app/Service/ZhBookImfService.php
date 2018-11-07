@@ -11,14 +11,14 @@ namespace App\Service;
 use App\Jobs\InsertZhBookImfJob;
 use App\Models\Book;
 use App\Models\ZhBookImf;
-use App\Resource\GoogleTranslateResource;
+use App\Resource\QinghuaTranslateResource;
 
 
 class ZhBookImfService extends BaseService
 {
     protected $translateResource;
 
-    public function __construct(GoogleTranslateResource $translateResource)
+    public function __construct(QinghuaTranslateResource $translateResource)
     {
         $this->translateResource = $translateResource;
     }
