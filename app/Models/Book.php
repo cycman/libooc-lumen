@@ -34,6 +34,11 @@ class Book extends Model
         return $this->hasOne('App\Models\BookDesc', 'md5', 'MD5');
     }
 
+    public function extZhImf()
+    {
+        return $this->hasOne('App\Models\ZhBookImf', 'md5', 'md5');
+    }
+
     /**
      * 根据id列表查询book列表
      * @param array $ids

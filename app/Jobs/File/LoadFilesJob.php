@@ -10,7 +10,9 @@ namespace App\Jobs\File;
 
 
 use App\Jobs\Job;
+use App\Resource\BaiduTranslateResource;
 use App\Service\FileService;
+use Illuminate\Support\Facades\App;
 
 class LoadFilesJob extends Job
 {
