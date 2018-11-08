@@ -28,7 +28,7 @@ class QinghuaTranslateResource
         curl_close($ch);
         $r= str_replace("\u3002", '', $r);
         $result = json_decode($r, true);
-        return explode("|||", $result['trg']);
+        return explode("||", $result['trg']);
     }
 }
 
