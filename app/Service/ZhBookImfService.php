@@ -32,15 +32,14 @@ class ZhBookImfService extends BaseService
         $offset = 0;
         while ($maxSize > $offset) {
             $query = File::query();
-            $query->leftJoin('updated', 'updated.ID', '=', 'b_file.bid');
-            $query->where(['updated.language' => 'english']);
+            $query->select(['b_file.bid', 'b_book_zh_imf.descr','b_book_zh_imf.title']);
+            $books = $query->leftJoin('b_book_zh_imf', 'b_book_zh_imf.md5', '=', 'b_file.md5')->get()->toArray();
             $query->offset($offset);
             $query->limit(1);
-            $books = $query->leftJoin('b_book_zh_imf', 'b_book_zh_imf.md5', '=', 'b_file.md5')->get()->toArray();
             $bookIds = [];
             foreach ($books as $book) {
-                if (isset($book['ID']) && empty($book['descr']) && empty($book['title'])) {
-                    $bookIds[] = $book['ID'];
+                if (isset($book['bid']) && empty($book['descr']) && empty($book['title'])) {
+                    $bookIds[] = $book['bid'];
                 }
             }
             $offset += 1;
@@ -57,7 +56,10 @@ class ZhBookImfService extends BaseService
     public function batchInsertZhBookImfs(array $bids = [])
     {
         ZhBookImf::query()->whereIn('bid', $bids)->delete();
-        $books = Book::query()->whereIn('updated.ID', $bids)->leftJoin((new BookDesc())->getTable(), 'updated.MD5', '=', 'description.md5')
+        $books = Book::query()
+            ->where('updated.language','=','english')
+            ->whereIn('updated.ID', $bids)
+            ->leftJoin((new BookDesc())->getTable(), 'updated.MD5', '=', 'description.md5')
             ->get()
             ->toArray();
         $enTitles = [];
