@@ -34,7 +34,7 @@ class ZhBookImfService extends BaseService
             $query->rightJoin('b_file', 'updated.ID', '=', 'b_file.bid');
             $query->where(['updated.language' => 'english']);
             $query->offset($offset);
-            $query->limit(1);
+            $query->limit(3);
             $books = $query->with('extZhImf')->get()->toArray();
             $bookIds = [];
             foreach ($books as $book) {
@@ -42,7 +42,7 @@ class ZhBookImfService extends BaseService
                     $bookIds[] = $book['ID'];
                 }
             }
-            $offset += 10;
+            $offset += 3;
             if (!empty($bookIds)) {
                 dispatch(app()->makeWith(InsertZhBookImfJob::class, ['ids' => $bookIds,]));
             }
@@ -62,7 +62,7 @@ class ZhBookImfService extends BaseService
         $enTitles = [];
         $enDescs = [];
         foreach ($books as $book) {
-            $enDescs[] = empty($book['descr'])? 'empty':$book['descr'];
+            $enDescs[] = empty($book['descr'])? 'empty':$book['ext_book_desc']['descr'];
             $enTitles[] = empty($book['Title']) ? 'empty' : $book['Title'];
         }
         $chTitles = $this->translateResource->translateEnToZh($enTitles);
