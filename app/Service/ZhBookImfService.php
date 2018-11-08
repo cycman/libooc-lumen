@@ -62,7 +62,7 @@ class ZhBookImfService extends BaseService
         $enTitles = [];
         $enDescs = [];
         foreach ($books as $book) {
-            $enDescs[] = empty($book['descr'])? 'empty':$book['ext_book_desc']['descr'];
+            $enDescs[] = empty($book['descr'])? 'empty':$book['descr'];
             $enTitles[] = empty($book['Title']) ? 'empty' : $book['Title'];
         }
         $chTitles = $this->translateResource->translateEnToZh($enTitles);
