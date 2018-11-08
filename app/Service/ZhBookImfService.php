@@ -11,6 +11,7 @@ namespace App\Service;
 use App\Jobs\InsertZhBookImfJob;
 use App\Models\Book;
 use App\Models\BookDesc;
+use App\Models\File;
 use App\Models\ZhBookImf;
 use App\Resource\QinghuaTranslateResource;
 
@@ -27,18 +28,18 @@ class ZhBookImfService extends BaseService
 
     public function genInsertImfJobs()
     {
-        $maxSize = Book::query()->count('*');
+        $maxSize = File::query()->count('*');
         $offset = 0;
         while ($maxSize > $offset) {
-            $query = Book::query();
-            $query->rightJoin('b_file', 'updated.ID', '=', 'b_file.bid');
+            $query = File::query();
+            $query->leftJoin('updated', 'updated.ID', '=', 'b_file.bid');
             $query->where(['updated.language' => 'english']);
             $query->offset($offset);
             $query->limit(1);
-            $books = $query->with('extZhImf')->get()->toArray();
+            $books = $query->leftJoin('b_book_zh_imf', 'b_book_zh_imf.md5', '=', 'b_file.md5')->get()->toArray();
             $bookIds = [];
             foreach ($books as $book) {
-                if (!isset($book['ext_zh_imf'])) {
+                if (isset($book['ID']) && empty($book['descr']) && empty($book['title'])) {
                     $bookIds[] = $book['ID'];
                 }
             }
