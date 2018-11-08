@@ -35,17 +35,18 @@ class ZhBookImfService extends BaseService
             $query->select(['b_file.bid', 'b_book_zh_imf.descr','b_book_zh_imf.title']);
             $books = $query->leftJoin('b_book_zh_imf', 'b_book_zh_imf.md5', '=', 'b_file.md5')->get()->toArray();
             $query->offset($offset);
-            $query->limit(1);
+            $query->limit(1000);
             $bookIds = [];
             foreach ($books as $book) {
                 if (isset($book['bid']) && empty($book['descr']) && empty($book['title'])) {
                     $bookIds[] = $book['bid'];
                 }
+                if (count($bookIds)==1) {
+                    dispatch(app()->makeWith(InsertZhBookImfJob::class, ['ids' => $bookIds,]));
+                    $bookIds = [];
+                }
             }
-            $offset += 1;
-            if (!empty($bookIds)) {
-                dispatch(app()->makeWith(InsertZhBookImfJob::class, ['ids' => $bookIds,]));
-            }
+            $offset += 1000;
         }
     }
 
