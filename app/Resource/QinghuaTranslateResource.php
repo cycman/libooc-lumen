@@ -18,7 +18,7 @@ class QinghuaTranslateResource
 
     public function translateEnToZh($queries = [])
     {
-        $query = implode("/", $queries);
+        $query = implode(" lvbs ", $queries);
         $url = sprintf("%s/%s", $this->url, rawurlencode(rawurlencode($query)));
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -28,7 +28,7 @@ class QinghuaTranslateResource
         curl_close($ch);
         $r= str_replace("\u3002", '', $r);
         $result = json_decode($r, true);
-        return explode("/", $result['trg']);
+        return explode("lvbs", $result['trg']);
     }
 }
 

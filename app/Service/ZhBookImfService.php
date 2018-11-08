@@ -34,7 +34,7 @@ class ZhBookImfService extends BaseService
             $query->rightJoin('b_file', 'updated.ID', '=', 'b_file.bid');
             $query->where(['updated.language' => 'english']);
             $query->offset($offset);
-            $query->limit(3);
+            $query->limit(1);
             $books = $query->with('extZhImf')->get()->toArray();
             $bookIds = [];
             foreach ($books as $book) {
@@ -42,7 +42,7 @@ class ZhBookImfService extends BaseService
                     $bookIds[] = $book['ID'];
                 }
             }
-            $offset += 3;
+            $offset += 1;
             if (!empty($bookIds)) {
                 dispatch(app()->makeWith(InsertZhBookImfJob::class, ['ids' => $bookIds,]));
             }
@@ -56,19 +56,19 @@ class ZhBookImfService extends BaseService
     public function batchInsertZhBookImfs(array $bids = [])
     {
         ZhBookImf::query()->whereIn('bid', $bids)->delete();
-        $books = Book::query()->whereIn('updated.ID', $bids)->leftJoin((new BookDesc())->getTable(),'updated.MD5','=','description.md5')
+        $books = Book::query()->whereIn('updated.ID', $bids)->leftJoin((new BookDesc())->getTable(), 'updated.MD5', '=', 'description.md5')
             ->get()
             ->toArray();
         $enTitles = [];
         $enDescs = [];
         foreach ($books as $book) {
-            $enDescs[] = empty($book['descr'])? 'empty':$book['descr'];
+            $enDescs[] = (!isset($book['descr']) || empty($book['descr'])) ? 'empty' : $book['descr'];
             $enTitles[] = empty($book['Title']) ? 'empty' : $book['Title'];
         }
         $chTitles = $this->translateResource->translateEnToZh($enTitles);
         $chDescs = $this->translateResource->translateEnToZh($enDescs);
         foreach ($books as $index => $book) {
-            $zhBookimf = ['bid' => $book['ID'], 'md5' => $book['MD5'], 'descr' => $chDescs[$index]??'', 'title' => $chTitles[$index]??'',];
+            $zhBookimf = ['bid' => $book['ID'], 'md5' => $book['MD5'], 'descr' => $chDescs[$index] ?? '', 'title' => $chTitles[$index] ?? '',];
             $zhBookimfModel = new ZhBookImf();
             $zhBookimfModel->setRawAttributes($zhBookimf);
             $zhBookimfModel->save();
