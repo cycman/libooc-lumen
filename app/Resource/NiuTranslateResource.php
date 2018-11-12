@@ -19,12 +19,18 @@ class NiuTranslateResource
     public function translateEnToZh($queries = [])
     {
         $query = implode(" lvbs ", $queries);
-        $url = sprintf("%s?from=en&to=zh&src_text=%s", $this->url, urlencode($query));
+        $url = sprintf("%s", $this->url);
+        $post_data = [
+            'from'=>'en',
+            'src_text' => $query,
+        ];
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS,$post_data);
 
         $r = curl_exec($ch);
         curl_close($ch);
