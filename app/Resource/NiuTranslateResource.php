@@ -30,6 +30,10 @@ class NiuTranslateResource
         curl_close($ch);
         $r = str_replace("\n", '', $r);
         $result = json_decode($r, true);
+        if (isset($result['error_code'])) {
+            Log::error(json_encode($result));
+            throw new \Exception('error', $result['error_code']);
+        }
         return explode("lvbs", $result['tgt_text']);
     }
 }
