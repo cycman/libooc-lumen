@@ -19,7 +19,7 @@ class NiuTranslateResource
     public function translateEnToZh($queries = [])
     {
         $query = implode(" lvbs ", $queries);
-        $url = sprintf("%s?from=en&to=zh&src_text=%s", $this->url, (urlencode($query)));
+        $url = sprintf("%s?from=en&to=zh&src_text=%s", $this->url, urlencode($query));
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_TIMEOUT, 10);
@@ -29,6 +29,7 @@ class NiuTranslateResource
         $r = curl_exec($ch);
         curl_close($ch);
         $r = str_replace("\n", '', $r);
+        $r = str_replace(" ", '', $r);
         $result = json_decode($r, true);
         if (isset($result['error_code'])) {
             Log::error(json_encode([$result,$url]));
