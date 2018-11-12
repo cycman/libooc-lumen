@@ -30,7 +30,7 @@ class NiuTranslateResource
         curl_close($ch);
         $r = str_replace("\n", '', $r);
         $result = json_decode($r, true);
-        return explode("lvbs", $result['trg']);
+        return explode("lvbs", $result['tgt_text']);
     }
 }
 
