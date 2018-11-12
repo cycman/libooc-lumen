@@ -13,6 +13,7 @@ use App\Models\Book;
 use App\Models\BookDesc;
 use App\Models\File;
 use App\Models\ZhBookImf;
+use App\Resource\NiuTranslateResource;
 use App\Resource\QinghuaTranslateResource;
 
 
@@ -20,7 +21,7 @@ class ZhBookImfService extends BaseService
 {
     protected $translateResource;
 
-    public function __construct(QinghuaTranslateResource $translateResource)
+    public function __construct(NiuTranslateResource $translateResource)
     {
         $this->translateResource = $translateResource;
     }
