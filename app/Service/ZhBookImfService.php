@@ -34,9 +34,9 @@ class ZhBookImfService extends BaseService
         while ($maxSize > $offset) {
             $query = File::query();
             $query->select(['b_file.bid', 'b_book_zh_imf.descr','b_book_zh_imf.title']);
-            $books = $query->leftJoin('b_book_zh_imf', 'b_book_zh_imf.bid', '=', 'b_file.bid')->get()->toArray();
             $query->offset($offset);
             $query->limit(1000);
+            $books = $query->leftJoin('b_book_zh_imf', 'b_book_zh_imf.bid', '=', 'b_file.bid')->get()->toArray();
             $bookIds = [];
             foreach ($books as $book) {
                 if (isset($book['bid']) && empty($book['descr']) && empty($book['title'])) {
