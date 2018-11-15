@@ -43,10 +43,13 @@ class ZhBookImfService extends BaseService
                 if (isset($book['bid']) && empty($book['descr']) && empty($book['title'])) {
                     $bookIds[] = $book['bid'];
                 }
-                if (count($bookIds)==1) {
+                if (count($bookIds)>=10) {
                     dispatch(app()->makeWith(InsertZhBookImfJob::class, ['ids' => $bookIds,]));
                     $bookIds = [];
                 }
+            }
+            if (!empty($bookIds)) {
+                dispatch(app()->makeWith(InsertZhBookImfJob::class, ['ids' => $bookIds,]));
             }
             $offset += 1000;
         }
