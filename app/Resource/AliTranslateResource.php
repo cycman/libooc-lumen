@@ -7,7 +7,7 @@
  */
 
 namespace App\Resource;
-require_once __DIR__ . '/aliyun-openapi-php-sdk/aliyun-php-sdk-core/Config.php';
+require_once __DIR__ . '/aliyun-php-sdk-core/Config.php';
 
 class AliTranslateResource extends \RoaAcsRequest
 {
