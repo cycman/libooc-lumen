@@ -13,8 +13,6 @@ use App\Models\Book;
 use App\Models\BookTopic;
 use App\Service\Taobao\ProductService;
 use App\Tool\CArray;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TaoBaoCsvService extends BaseService

@@ -21,6 +21,6 @@ class ZhBookImfServiceTest extends TestCase
 
     public function testGenInsertImfJobs()
     {
-        $this->app->make(ZhBookImfService::class)->genInsertImfJobs();
+        //$this->app->make(ZhBookImfService::class)->genInsertImfJobs();
     }
 }

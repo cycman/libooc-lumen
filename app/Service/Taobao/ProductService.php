@@ -26,13 +26,13 @@ class ProductService extends BaseService
         $this->font = env('FONT', '').'simsun.ttc';
     }
 
-    public function genProductTitle(array $book = []): string
+    public function genProductTitle( $book = []): string
     {
         $titile = substr($book['Title'], 0, 60);
         return $titile;
     }
 
-    public function genProductDesc(array $book = []): string
+    public function genProductDesc( $book = []): string
     {
         $previewUrl = $this->forumService->getThreadUrlByMd5($book['MD5']);
         $descTemplate = <<<html
@@ -85,10 +85,10 @@ html;
 
     /**
      * 生成无线描述
-     * @param array $book
+     * @param  $book
      * @return string
      */
-    public function genWirelessDesc(array $book = []): string
+    public function genWirelessDesc( $book = []): string
     {
         $previewUrl = $this->forumService->getThreadUrlByMd5($book['MD5']);
         $descTemplate = <<<html
@@ -109,7 +109,7 @@ html;
     }
 
 
-    public function genBookProductWatermarkImages(array $book, $dest,$extension='tbi',$rwidth=800,$rheight=800): bool
+    public function genBookProductWatermarkImages( $book, $dest,$extension='tbi',$rwidth=800,$rheight=800): bool
     {
         try{
             $originFile = env('BOOK_IMAGE_DIR') . $book['Coverurl'];

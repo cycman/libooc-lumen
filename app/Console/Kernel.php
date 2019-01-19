@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\Csv\KfzCsvCommand;
 use App\Console\Commands\InsertZhBookImf;
 use App\Console\Commands\UpdateBookTopic;
 use Illuminate\Console\Scheduling\Schedule;
@@ -14,12 +15,13 @@ class Kernel extends ConsoleKernel
      *
      * @var array
      */
-    protected $commands = [
+    protected $commands = array(
         //
         \Laravelista\LumenVendorPublish\VendorPublishCommand::class,
         'translate:topic'=>UpdateBookTopic::class,
-        'InsertZhBookImf'=>InsertZhBookImf::class
-    ];
+        'InsertZhBookImf'=>InsertZhBookImf::class,
+        'KfzCsvCommand'=>KfzCsvCommand::class
+    );
 
     /**
      * Define the application's command schedule.

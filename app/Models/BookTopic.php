@@ -34,4 +34,11 @@ class BookTopic extends Model
         $query->where(['topic_id_hl' => $id,]);
         return $query->get()->toArray();
     }
+
+    public function findByTopicId($id,$language='en')
+    {
+        $query = self::query();
+        $query->where(['topic_id' => $id,'lang'=>$language]);
+        return $query->get()->toArray();
+    }
 }
