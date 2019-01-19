@@ -9,7 +9,7 @@ services:
       - php_volumes:/data/www
       - ../log/nginx:/var/log/nginx
     links:
-      - "php"
+      - "php "
   php:
     build: ./.docker/php
     environment:
