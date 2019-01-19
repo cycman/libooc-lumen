@@ -5,4 +5,4 @@ Homestead.yaml
 .env
 data
 storage
-
+.docker-compose.yml
