@@ -43,14 +43,14 @@ class BookQueryService extends BaseService
     {
         $limit = $input['size'];
         $query = Book::query();
-        $query->with('extZhImf');
+        $query->rightJoin('b_book_zh_imf','b_book_zh_imf.bid','=','updated.id');
         $query->leftJoin('b_book_query_record', 'updated.ID', '=', 'b_book_query_record.bid');
-        $query->whereNotNull('b_book_zh_imf.id');
-        $query->select("updated.Title as name,b_book_zh_imf.title as translation, b_book_zh_imf.descr as brief");
+        $query->select("updated.ID","updated.Title as name", "b_book_zh_imf.title as translation ","b_book_zh_imf.descr as brief");
         $query->rightJoin('b_file', 'updated.ID', '=', 'b_file.bid');
         if (!empty($input['topic'])) {
             $query->where(['updated.topic' => $input['topic']]);
         }
+        $query->whereNull('b_book_query_record.id');
         $query->where(['updated.language' => 'english']);
         $query->limit($limit);
         return $query->get()->toArray();

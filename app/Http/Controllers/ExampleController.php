@@ -18,6 +18,7 @@ class ExampleController extends Controller
 
     public function show()
     {
+        echo "test";
     }
 
     //

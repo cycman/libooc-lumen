@@ -10,5 +10,6 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
-$router->get('/file/batch_load_files', 'BooksController@getBooks');
+$router->post('/books/get-books', 'BookController@getBooks');
+$router->post('/books/record-books', 'BookController@record_books');
 

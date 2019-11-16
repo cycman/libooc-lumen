@@ -10,12 +10,12 @@ namespace App\Service\Forum;
 
 
 use App\Service\BaseService;
+use Illuminate\Support\Facades\DB;
 
 class ForumCheckService extends BaseService
 {
     public function checkBookDeployed($md5)
     {
-
     }
 
 }

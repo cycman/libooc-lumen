@@ -41,11 +41,11 @@ class BookController extends Controller
         try {
             $data = $request->toArray();
             $input = [
-                'limit' => $data['sum'] ?? 10,
+                'size' => $data['sum'] ?? 10,
                 'topic' => $data['category'] ?? ''
             ];
             $books = app(BookQueryService::class)->get_english_books_without_queried($input);
-            return $this->responseBooks(0, $books, $this->decode_stamp(array_pluck($books, 'ID')));
+            return $this->responseBooks(0, $books, $this->encode_stamp(array_pluck($books, 'ID')));
         } catch (\Exception $e) {
             return $this->responseBooks(10001, $e->getTraceAsString(), '');
         }
@@ -55,20 +55,20 @@ class BookController extends Controller
 //记录已经使用过的书籍
     public function record_books(Request $request)
     {
-        $ids = $this->encode_stamp($request['stamp']);
+        $ids = $this->decode_stamp($request['stamp']);
         app(BookService::class)->addQueryRecord($ids);
         return ['err' => 0];
     }
 
-    private function decode_stamp($array_pluck)
+    private function decode_stamp($stamp)
     {
-        return base64_decode(json_encode($array_pluck));
+        $data = base64_decode($stamp);
+        return json_decode($data, true);
     }
 
-    private function encode_stamp($stamp)
+    private function encode_stamp($data)
     {
-        $data = base64_encode($stamp);
-        return json_decode($data, true);
+        return base64_encode(json_encode($data));
     }
 
 

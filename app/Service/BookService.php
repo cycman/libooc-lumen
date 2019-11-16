@@ -8,14 +8,18 @@
 
 namespace App\Service;
 
-use App\Models\Book;
-use App\Models\BookTopic;
-use App\Tool\CArray;
+
+use Illuminate\Support\Facades\DB;
 
 class BookService extends BaseService
 {
     public function addQueryRecord($ids)
     {
+        $input = [];
+        foreach ($ids as $id) {
+            $input[] = ['bid' => $id,];
+        }
+        Db::table("b_book_query_record")->insert($input);
 
     }
 }
