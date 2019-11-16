@@ -68,5 +68,6 @@ $router->get('/batch', function () use ($router) {
 
 $router->get('/example/show', 'ExampleController@show');
 require_once('file_web.php');
+require_once('books.php');
 require_once('forum_web.php');
 require_once('taobao_web.php');
