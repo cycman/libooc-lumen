@@ -42,7 +42,7 @@ class BookController extends Controller
             $data = $request->toArray();
             $input = [
                 'size' => $data['sum'] ?? 10,
-                'topic' => $data['category'] ?? ''
+                    'topic' => $data['category'] ?? ''
             ];
             $books = app(BookQueryService::class)->get_english_books_without_queried($input);
             return $this->responseBooks(0, $books, $this->encode_stamp(array_pluck($books, 'ID')));
